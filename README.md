@@ -5,7 +5,7 @@ This repository contains the code required to re-create the data visualizations 
 R Core Team (2019). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
 ## Script
-<b>RSAmanuscriptdraft0125.Rmd</b>: reproduces the data visualizations and analyses; creates the .html file.
+<b>RSAmanuscriptdraft0125.Rmd</b> reproduces the data visualizations and analyses, and it creates the .html file.
 
 ## Data
 Data for <i>N</i> = 89 children, adolescent, and adult participants are stored in the <b><i>data</i></b> directory across multiple .csv files:
