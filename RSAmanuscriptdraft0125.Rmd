@@ -1,5 +1,5 @@
 ---
-title: "PrelimRSA"
+title: "RSA"
 author: "AC"
 date: "`r Sys.Date()`"
 output: 
@@ -40,6 +40,12 @@ rsa_theme <- theme(title = element_text(size = 26, vjust = 2, face = "bold"),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
         axis.line = element_line(colour = "black")) 
+
+# Define plot colors
+dlPFC <- "#293F14"
+VTC <- "#388697"
+AntHipp <- "#73A291"
+VTA <- "#BBBE64"
 ```
 
 ```{r loadData, echo = FALSE}
@@ -108,7 +114,7 @@ assochitd2all.long <- transform(assochitd2all.long, RewardType=stringr::str_extr
 assochitd2.long$ageScaled <- scale(assochitd2.long$ExactAge) # Scale age
 assochitd2.long$ageScaledsq <- (assochitd2.long$ageScaled)^2 
 
-# Make high reward category into a factor
+# Make reward variables factors
 assochitd2.long$HighRewardStim <- as.factor(assochitd2.long$HighRewardStim)
 assochitd2.long$RewardType <- as.factor(assochitd2.long$RewardType)
 
@@ -203,7 +209,7 @@ VTCers.long$ageScaled <- scale(VTCers.long$ExactAge) # Scale age
 VTCers.long$ageScaledsq <- (VTCers.long$ageScaled)^2
 VTCers.long$goldencvoxnumScaled <- scale(VTCers.long$goldencvoxnum) # Scale voxel number
 
-# Make high reward category into a factor
+# Make reward variables factors
 VTCers.long$HighRewardStim <- as.factor(VTCers.long$HighRewardStim)
 VTCers.long$RewardType <- as.factor(VTCers.long$RewardType)
 
@@ -244,14 +250,14 @@ ggplot(VTCers.long, aes(y = similarity, x = ExactAge, colour = RewardType, group
   geom_line(aes(group = subid), color = "grey", size = .1) +
   # ylim(0, 0.602) +
   rsa_theme
-ggsave('figures/ERS.png', width = 12, height = 8)
+ggsave('figures/VTC_ERS.png', width = 12, height = 8)
 
 # Compute average for two-lines test
 # VTCRSAdata$avgERS <- (VTCRSAdata$highrewardERS + VTCRSAdata$lowrewardERS) / 2
 # twolines(avgERS~ExactAge, graph = 1, link = "gaussian",data = VTCRSAdata)
 ```
 
-##  Encoding similarity
+##  Encoding Similarity
 
 0. Linear age model is best-fitting
 1. Main effects of reward level (p < 0.001) and age (p < 0.05), regardless of controlling for voxel number or removing 1 run subs
@@ -262,7 +268,7 @@ VTCencsim.long$ageScaled <- scale(VTCencsim.long$ExactAge) # Scale age
 VTCencsim.long$ageScaledsq <- (VTCencsim.long$ageScaled)^2
 VTCencsim.long$goldencvoxnumScaled <- scale(VTCencsim.long$goldencvoxnum) # Scale voxel number
 
-# Make high reward category into a factor
+# Make reward variables factors
 VTCencsim.long$HighRewardStim <- as.factor(VTCencsim.long$HighRewardStim)
 VTCencsim.long$RewardType <- as.factor(VTCencsim.long$RewardType)
 
@@ -301,10 +307,10 @@ ggplot(VTCencsim.long, aes(y = similarity, x = ExactAge, colour = RewardType, gr
   geom_line(aes(group = subid), color = "grey", size = .1) +
   # ylim(0, 0.602) +
   rsa_theme
-ggsave('figures/enc_sim.png', width = 12, height = 8)
+ggsave('figures/VTC_enc_sim.png', width = 12, height = 8)
 ```
 
-## Retrieval similarity
+## Retrieval Similarity
 
 0. Linear age model is best-fitting
 1. No effects
@@ -315,7 +321,7 @@ VTCretsim.long$ageScaled <- scale(VTCretsim.long$ExactAge) # Scale age
 VTCretsim.long$ageScaledsq <- (VTCretsim.long$ageScaled)^2
 VTCretsim.long$goldencvoxnumScaled <- scale(VTCretsim.long$goldencvoxnum) # Scale voxel number
 
-# Make high reward category into a factor
+# Make reward variables factors
 VTCretsim.long$HighRewardStim <- as.factor(VTCretsim.long$HighRewardStim)
 VTCretsim.long$RewardType <- as.factor(VTCretsim.long$RewardType)
 
@@ -343,461 +349,373 @@ ggplot(VTCretsim.long, aes(y = similarity, x = ExactAge, colour = RewardType, gr
   geom_line(aes(group = subid), color = "grey", size = .1) +
   # ylim(0, 0.602) +
   rsa_theme
+ggsave('figures/VTC_ret_sim.png', width = 12, height = 8)
 ```
 
-# Anterior Hippocampus Pattern Similarity LEFT OFF HERE
+# Anterior Hippocampus Pattern Similarity
 
 ```{r wrangleDataAntHippPatternSim, echo = FALSE}
-
-#Read in ERS data
+# Read in ERS data and change variable types
 anthippRSAdata = read.csv("data/RSAdata_antHIPP.csv")
-
 anthippRSAdata$subid = as.factor(anthippRSAdata$subid)
 
-#merge
+# Merge ERS and demographic data
 anthippRSAdata <- full_join(anthippRSAdata, demog, by = "subid")
-
 anthippRSAdata$HighRewardStim = ifelse(as.numeric(as.character(anthippRSAdata$subid)) %% 2 == 0, "High Reward Cat - Face","High Reward Cat - Place")
 
+# Read in mask voxel numbers and change variable types
 anthippERSvoxels = read.csv("data/RSAdfQAantHIPP.csv")
-
 anthippERSvoxels$subID = gsub("sub-","",anthippERSvoxels$subID)
 anthippERSvoxels$subid = as.factor(anthippERSvoxels$subID)
 
-#merge
+# Merge ERS and voxel data
 anthippRSAdata <- full_join(anthippRSAdata, anthippERSvoxels, by = "subid")
 
+# Melt data for stats and plots ---
 
-#anthipp ERS
+# AntHipp ERS
 anthippers.long = melt(anthippRSAdata,
-                          id.vars=c("subid","HighRewardStim", "AgeGroup", "ExactAge", "Gender", "goldencvoxnum"),
-                          measure.vars= c("highrewardERS", "lowrewardERS"),
-                          variable.name= "ERScond")
-names(anthippers.long)[names(anthippers.long)=="value"] <- "similarity"
+                       id.vars = c("subid", "HighRewardStim", "AgeGroup", "ExactAge", "Gender", "goldencvoxnum"),
+                       measure.vars = c("highrewardERS", "lowrewardERS"),
+                       variable.name = "ERScond")
+names(anthippers.long)[names(anthippers.long) == "value"] <- "similarity"
 findRew <- "(high|low)"
-anthippers.long <- transform(anthippers.long, RewardType=stringr::str_extract(ERScond,findRew))
+anthippers.long <- transform(anthippers.long, RewardType = stringr::str_extract(ERScond, findRew))
+anthippers.longwstat = summarySE(anthippers.long, measurevar = "similarity", groupvars = c("RewardType", "AgeGroup"))
 
-anthippers.longwstat = summarySE(anthippers.long, measurevar= "similarity", groupvars=c("RewardType","AgeGroup"))
-
-
-#anthipp enc sim
+# AntHipp encoding similarity
 anthippencsim.long = melt(anthippRSAdata,
-                          id.vars=c("subid","HighRewardStim", "AgeGroup", "ExactAge", "Gender", "goldencvoxnum"),
-                          measure.vars= c("highrewardencsim", "lowrewardencsim"),
-                          variable.name= "encsimcond")
-names(anthippencsim.long)[names(anthippencsim.long)=="value"] <- "similarity"
+                          id.vars = c("subid", "HighRewardStim", "AgeGroup", "ExactAge", "Gender", "goldencvoxnum"),
+                          measure.vars = c("highrewardencsim", "lowrewardencsim"),
+                          variable.name = "encsimcond")
+names(anthippencsim.long)[names(anthippencsim.long) == "value"] <- "similarity"
 findRew <- "(high|low)"
-anthippencsim.long <- transform(anthippencsim.long, RewardType=stringr::str_extract(encsimcond,findRew))
+anthippencsim.long <- transform(anthippencsim.long, RewardType = stringr::str_extract(encsimcond, findRew))
+anthippencsim.longwstat = summarySE(anthippencsim.long, measurevar = "similarity", groupvars = c("RewardType", "AgeGroup"))
 
-anthippencsim.longwstat = summarySE(anthippencsim.long, measurevar= "similarity", groupvars=c("RewardType","AgeGroup"))
-
-#anthipp ret sim
+# AntHipp retrieval similarity
 anthippretsim.long = melt(anthippRSAdata,
-                          id.vars=c("subid","HighRewardStim", "AgeGroup", "ExactAge", "Gender", "goldretvoxnum"),
-                          measure.vars= c("highrewardretsim", "lowrewardretsim"),
-                          variable.name= "retsimcond")
-names(anthippretsim.long)[names(anthippretsim.long)=="value"] <- "similarity"
+                          id.vars = c("subid", "HighRewardStim", "AgeGroup", "ExactAge", "Gender", "goldretvoxnum"),
+                          measure.vars = c("highrewardretsim", "lowrewardretsim"),
+                          variable.name = "retsimcond")
+names(anthippretsim.long)[names(anthippretsim.long) == "value"] <- "similarity"
 findRew <- "(high|low)"
-anthippretsim.long <- transform(anthippretsim.long, RewardType=stringr::str_extract(retsimcond,findRew))
-
-anthippretsim.longwstat = summarySE(anthippretsim.long, measurevar= "similarity", groupvars=c("RewardType","AgeGroup"))
+anthippretsim.long <- transform(anthippretsim.long, RewardType=stringr::str_extract(retsimcond, findRew))
+anthippretsim.longwstat = summarySE(anthippretsim.long, measurevar = "similarity", groupvars = c("RewardType", "AgeGroup"))
 ```
 
 ## ERS
 
+0. Linear age model is best-fitting
+1. Interaction between reward level and age (p < 0.01), regardless of controlling for voxel number or removing 1 run subs
+
 ```{r analyzeAntHippERS, echo = FALSE}
-#anthipp ERS stats
-
-#z-score age and add age squared
-anthippers.long$ageScaled <- scale(anthippers.long$ExactAge) #scale age
+# Z-score age and voxel number and add age squared
+anthippers.long$ageScaled <- scale(anthippers.long$ExactAge) # Scale age
 anthippers.long$ageScaledsq <- (anthippers.long$ageScaled)^2
-anthippers.long$goldencvoxnumScaled <- scale(anthippers.long$goldencvoxnum) #scale voxel number
+anthippers.long$goldencvoxnumScaled <- scale(anthippers.long$goldencvoxnum) # Scale voxel number
 
-#make reward stimulus category into a factor
+# Make reward variables factors
 anthippers.long$HighRewardStim <- as.factor(anthippers.long$HighRewardStim)
 anthippers.long$RewardType <- as.factor(anthippers.long$RewardType)
 
-#first fit age models and determine whether age linear or squared provides better fit
-anthippersd1modelagelin <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), REML=FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), data = anthippers.long)
+# Find best-fitting age model
+anthippersd1modelagelin <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), REML = FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), data = anthippers.long)
+anthippersd1modelagesq <- lmer(similarity ~ RewardType * ageScaled + RewardType * ageScaledsq + HighRewardStim + (1|subid), REML = FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), data = anthippers.long)
+anova(anthippersd1modelagelin, anthippersd1modelagesq) # agelin preferred
 
-anthippersd1modelagesq <- lmer(similarity ~ RewardType * ageScaled + RewardType * ageScaledsq + HighRewardStim + (1|subid), REML=FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), data = anthippers.long)
+# Find viable rfx structure
+# anthippersd1modelfullrfx <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (RewardType||subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippers.long) # unidentifiable
+anthippersd1modelnoslope <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippers.long)
 
-anova(anthippersd1modelagelin,anthippersd1modelagesq) #age lin preferred
+# Model stats
+Anova(anthippersd1modelnoslope, type = "III")
 
-#anthippersd1modelfullrfx <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (RewardType||subid), control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippers.long) #unidentifiable
+# Sensitivity analysis - control for voxel number, same pattern of results as above
+anthippersd1modelnoslopevoxcontrol <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + goldencvoxnumScaled + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippers.long)
+Anova(anthippersd1modelnoslopevoxcontrol, type = "III")
 
-anthippersd1modelnoslope <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippers.long)
-
-Anova(anthippersd1modelnoslope, type="III")
-
-
-#control for voxnum in ROI - same pattern
-anthippersd1modelnoslopevoxcontrol <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + goldencvoxnumScaled + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippers.long)
-
-Anova(anthippersd1modelnoslopevoxcontrol, type="III")
-
-
-#remove subs with only 1 run - same pattern
+# Sensitivity analysis - remove subs with only 1 run
 singlerunsubs <- anthippRSAdata$subid[rowSums(is.na(anthippRSAdata)) > 0]
 singlerunsubs <- as.vector(singlerunsubs)
 anthippers.long.tworunsonly <- anthippers.long[!anthippers.long$subid %in% singlerunsubs, ]
 
-anthippersd1modelnoslopetworuns <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippers.long.tworunsonly)
+# Same pattern of results as above
+anthippersd1modelnoslopetworuns <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippers.long.tworunsonly)
+Anova(anthippersd1modelnoslopetworuns, type = "III")
 
-Anova(anthippersd1modelnoslopetworuns, type="III")
-
-
-
-ggplot(anthippers.long, aes(y = similarity, x = ExactAge, colour=RewardType, group=RewardType)) + #define data; x & y variables
-  geom_point(size=3) + #make each subject a different color dot
-  stat_smooth(method="lm", formula=y~x, aes(fill=RewardType), size=3) + #add line of best fit
-  xlab("Age") + #x axis label
-  ylab("Encoding-Retrieval Similarity") + #y axis label
-  scale_colour_manual(values = c("gold","snow4"), name = "Reward Level") +
-  scale_fill_manual(values = c("gold","snow4"), guide = "none") +
-  geom_line(aes(group=subid), color="grey", size=.1) +
- # ylim(0, 0.602) +
-  theme(title= element_text(size=26, vjust=2, face="bold"), #use these settings for titles unless otherwise specified
-        axis.title.x= element_text(size=26),
-        axis.title.y= element_text(size=26, vjust=1.5),
-        axis.text.x= element_text(size=24, colour="black", vjust=0.6),
-        axis.text.y= element_text(size=24, colour="black"),
-        legend.title= element_text(size=24), #no legend, but just in case you need one
-        legend.text= element_text(size=24),
-        legend.position="bottom",
-        strip.text = element_text(size=24, face="bold"), #text in strip headings
-        panel.grid.major = element_blank(), #take out grid marks
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        axis.line = element_line(colour = "black"))
+# Plot
+ggplot(anthippers.long, aes(y = similarity, x = ExactAge, colour = RewardType, group = RewardType)) +
+  geom_point(size = 3) + # make each subject a different color dot
+  stat_smooth(method = "lm", formula = y~x, aes(fill = RewardType), size = 3) + # add line of best fit
+  xlab("Age") + # x axis label
+  ylab("Encoding-Retrieval Similarity") + # y axis label
+  scale_colour_manual(values = c("gold", "snow4"), name = "Reward Level") +
+  scale_fill_manual(values = c("gold", "snow4"), guide = "none") +
+  geom_line(aes(group = subid), color = "grey", size = .1) +
+  # ylim(0, 0.602) +
+  rsa_theme
+ggsave('figures/AntHipp_ERS.png', width = 12, height = 8)
 ```
 
-## Encoding similarity
+## Encoding Similarity
 
-```{r analyzeAntHippEncodingSim, echo = FALSE}
-#anthipp enc sim stats
+0. Linear age model is best-fitting
+1. No effects, regardless of controlling for voxel number
 
-#z-score age and add age squared
-anthippencsim.long$ageScaled <- scale(anthippencsim.long$ExactAge) #scale age
+```{r analyzeAntHippEncodingSim, echo = FALSE, warning = FALSE, message = FALSE}
+# Z-score age and voxel number and add age squared
+anthippencsim.long$ageScaled <- scale(anthippencsim.long$ExactAge) # Scale age
 anthippencsim.long$ageScaledsq <- (anthippencsim.long$ageScaled)^2
-anthippencsim.long$goldencvoxnumScaled <- scale(anthippencsim.long$goldencvoxnum) #scale voxel number
+anthippencsim.long$goldencvoxnumScaled <- scale(anthippencsim.long$goldencvoxnum) # Scale voxel number
 
-#make reward stimulus category into a factor
+# Make reward variables factors
 anthippencsim.long$HighRewardStim <- as.factor(anthippencsim.long$HighRewardStim)
 anthippencsim.long$RewardType <- as.factor(anthippencsim.long$RewardType)
 
-#first fit age models and determine whether age linear or squared provides better fit
-anthippencsimd1modelagelin <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), REML=FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), data = anthippencsim.long)
+# Find best-fitting age model
+anthippencsimd1modelagelin <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), REML = FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), data = anthippencsim.long)
+anthippencsimd1modelagesq <- lmer(similarity ~ RewardType * ageScaled + RewardType * ageScaledsq + HighRewardStim + (1|subid), REML = FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), data = anthippencsim.long)
+anova(anthippencsimd1modelagelin, anthippencsimd1modelagesq) # agelin preferred
 
-anthippencsimd1modelagesq <- lmer(similarity ~ RewardType * ageScaled + RewardType * ageScaledsq + HighRewardStim + (1|subid), REML=FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), data = anthippencsim.long)
+# Find viable rfx structure
+# anthippencsimd1modelfullrfx <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (RewardType||subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippencsim.long) # unidentifiable
+anthippencsimd1modelnoslope <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippencsim.long)
+Anova(anthippencsimd1modelnoslope, type = "III")
 
-anova(anthippencsimd1modelagelin,anthippencsimd1modelagesq) #age lin preferred
+# Sensitivity analysis - control for voxel number, same pattern of results as above
+anthippencsimd1modelnoslopevoxcontrol <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + goldencvoxnumScaled + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippencsim.long)
+Anova(anthippencsimd1modelnoslopevoxcontrol, type = "III")
 
-#anthippencsimd1modelfullrfx <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (RewardType||subid), control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippencsim.long) #unidentifiable
-
-anthippencsimd1modelnoslope <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippencsim.long)
-
-Anova(anthippencsimd1modelnoslope, type="III")
-
-#control for voxels in mask - same pattern
-anthippencsimd1modelnoslopevoxcontrol <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + goldencvoxnumScaled + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippencsim.long)
-
-Anova(anthippencsimd1modelnoslopevoxcontrol, type="III")
-
-
-ggplot(anthippencsim.long, aes(y = similarity, x = ExactAge, colour=RewardType, group=RewardType)) + #define data; x & y variables
-  geom_point(size=3) + #make each subject a different color dot
-  stat_smooth(method="lm", formula=y~x, aes(fill=RewardType), size=3) + #add line of best fit
-  xlab("Age") + #x axis label
-  ylab("Encoding Similarity") + #y axis label
-  scale_colour_manual(values = c("gold","snow4"), name = "Reward Level") +
-  scale_fill_manual(values = c("gold","snow4"), guide = "none") +
-  geom_line(aes(group=subid), color="grey", size=.1) +
- # ylim(0, 0.602) +
-  theme(title= element_text(size=26, vjust=2, face="bold"), #use these settings for titles unless otherwise specified
-        axis.title.x= element_text(size=26),
-        axis.title.y= element_text(size=26, vjust=1.5),
-        axis.text.x= element_text(size=24, colour="black", vjust=0.6),
-        axis.text.y= element_text(size=24, colour="black"),
-        legend.title= element_text(size=24), #no legend, but just in case you need one
-        legend.text= element_text(size=24),
-        legend.position="bottom",
-        strip.text = element_text(size=24, face="bold"), #text in strip headings
-        panel.grid.major = element_blank(), #take out grid marks
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        axis.line = element_line(colour = "black"))
+# Plot
+ggplot(anthippencsim.long, aes(y = similarity, x = ExactAge, colour = RewardType, group = RewardType)) +
+  geom_point(size = 3) + # make each subject a different color dot
+  stat_smooth(method = "lm", formula = y~x, aes(fill = RewardType), size = 3) + # add line of best fit
+  xlab("Age") + # x axis label
+  ylab("Encoding Similarity") + # y axis label
+  scale_colour_manual(values = c("gold", "snow4"), name = "Reward Level") +
+  scale_fill_manual(values = c("gold", "snow4"), guide = "none") +
+  geom_line(aes(group = subid), color = "grey", size = .1) +
+  # ylim(0, 0.602) +
+  rsa_theme
+ggsave('figures/AntHipp_enc_sim.png', width = 12, height = 8)
 ```
 
-## Retrieval similarity
+## Retrieval Similarity
 
-```{r analyzeAntHippRetrievalSim, echo = FALSE}
-#anthipp enc sim stats
+0. Linear age model is best-fitting
+1. No effects, regardless of controlling for voxel number
 
-#z-score age and add age squared
-anthippretsim.long$ageScaled <- scale(anthippretsim.long$ExactAge) #scale age
+```{r analyzeAntHippRetrievalSim, echo = FALSE, warning = FALSE, message = FALSE}
+# Z-score age and voxel number and add age squared
+anthippretsim.long$ageScaled <- scale(anthippretsim.long$ExactAge) # Scale age
 anthippretsim.long$ageScaledsq <- (anthippretsim.long$ageScaled)^2
-anthippretsim.long$goldretvoxnumScaled <- scale(anthippretsim.long$goldretvoxnum) #scale voxel number
+anthippretsim.long$goldretvoxnumScaled <- scale(anthippretsim.long$goldretvoxnum) # Scale voxel number
 
-#make reward stimulus category into a factor
+# Make reward variables factors
 anthippretsim.long$HighRewardStim <- as.factor(anthippretsim.long$HighRewardStim)
 anthippretsim.long$RewardType <- as.factor(anthippretsim.long$RewardType)
 
-#first fit age models and determine whether age linear or squared provides better fit
-anthippretsimd1modelagelin <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), REML=FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), data = anthippretsim.long)
+# Find best-fitting age model
+anthippretsimd1modelagelin <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), REML = FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), data = anthippretsim.long)
+anthippretsimd1modelagesq <- lmer(similarity ~ RewardType * ageScaled + RewardType * ageScaledsq + HighRewardStim + (1|subid), REML = FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), data = anthippretsim.long)
+anova(anthippretsimd1modelagelin, anthippretsimd1modelagesq) # agelin preferred
 
-anthippretsimd1modelagesq <- lmer(similarity ~ RewardType * ageScaled + RewardType * ageScaledsq + HighRewardStim + (1|subid), REML=FALSE, control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), data = anthippretsim.long)
+# Find viable rfx structure
+# anthippretsimd1modelfullrfx <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (RewardType||subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippretsim.long) # unidentifiable
+anthippretsimd1modelnoslope <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippretsim.long)
+Anova(anthippretsimd1modelnoslope, type = "III")
 
-anova(anthippretsimd1modelagelin,anthippretsimd1modelagesq) #age lin preferred
+# Sensitivity analysis - control for voxel number, same pattern of results as above
+anthippretsimd1modelnoslopevoxcontrol <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + goldretvoxnumScaled + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippretsim.long)
+Anova(anthippretsimd1modelnoslopevoxcontrol, type = "III")
 
-#anthippretsimd1modelfullrfx <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (RewardType||subid), control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippretsim.long) #unidentifiable
-
-anthippretsimd1modelnoslope <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippretsim.long)
-
-Anova(anthippretsimd1modelnoslope, type="III")
-
-#control for voxels in mask - same pattern
-anthippretsimd1modelnoslopevoxcontrol <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + goldretvoxnumScaled +(1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippretsim.long)
-
-Anova(anthippretsimd1modelnoslopevoxcontrol, type="III")
-
-
-ggplot(anthippretsim.long, aes(y = similarity, x = ExactAge, colour=RewardType, group=RewardType)) + #define data; x & y variables
-  geom_point(size=3) + #make each subject a different color dot
-  stat_smooth(method="lm", formula=y~x, aes(fill=RewardType), size=3) + #add line of best fit
-  xlab("Age") + #x axis label
-  ylab("Retrieval Similarity") + #y axis label
-  scale_colour_manual(values = c("gold","snow4"), name = "Reward Level") +
-  scale_fill_manual(values = c("gold","snow4"), guide = "none") +
-  geom_line(aes(group=subid), color="grey", size=.1) +
- # ylim(0, 0.602) +
-  theme(title= element_text(size=26, vjust=2, face="bold"), #use these settings for titles unless otherwise specified
-        axis.title.x= element_text(size=26),
-        axis.title.y= element_text(size=26, vjust=1.5),
-        axis.text.x= element_text(size=24, colour="black", vjust=0.6),
-        axis.text.y= element_text(size=24, colour="black"),
-        legend.title= element_text(size=24), #no legend, but just in case you need one
-        legend.text= element_text(size=24),
-        legend.position="bottom",
-        strip.text = element_text(size=24, face="bold"), #text in strip headings
-        panel.grid.major = element_blank(), #take out grid marks
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        axis.line = element_line(colour = "black"))
-
+# Plot
+ggplot(anthippretsim.long, aes(y = similarity, x = ExactAge, colour = RewardType, group = RewardType)) +
+  geom_point(size = 3) + # make each subject a different color dot
+  stat_smooth(method = "lm", formula = y~x, aes(fill = RewardType), size = 3) + # add line of best fit
+  xlab("Age") + # x axis label
+  ylab("Retrieval Similarity") + # y axis label
+  scale_colour_manual(values = c("gold", "snow4"), name = "Reward Level") +
+  scale_fill_manual(values = c("gold", "snow4"), guide = "none") +
+  geom_line(aes(group = subid), color = "grey", size = .1) +
+  # ylim(0, 0.602) +
+  rsa_theme
+ggsave('figures/AntHipp_ret_sim.png', width = 12, height = 8)
 ```
 
 # Trialwise VTC ERS
 
 ```{r trialwiseVTC, echo = FALSE, results = "hide"}
-
-#trial VTC ERS
+# Read in trial-wise VTC ERS data and change variable types
 trialwiseVTCERS = read.csv("data/trialwiseERS_VTC_wmemoryday2.csv")
 trialwiseVTCERS$subid <- as.factor(trialwiseVTCERS$subid)
 
-#merge
+# Merge ERS and demographic data
 trialwiseVTCERSwdemog <- full_join(trialwiseVTCERS, demog, by = "subid")
-
-#z-score age and add age squared
-trialwiseVTCERSwdemog$ageScaled <- scale(trialwiseVTCERSwdemog$ExactAge) #scale age
-trialwiseVTCERSwdemog$ageScaledsq <- (trialwiseVTCERSwdemog$ageScaled)^2
-trialwiseVTCERSwdemog$ERSZ <- scale(trialwiseVTCERSwdemog$ERS) #scale age
-
-#make character variables factors
 trialwiseVTCERSwdemog$HighRewardStim = ifelse(as.numeric(as.character(trialwiseVTCERSwdemog$subid)) %% 2 == 0, "High Reward Cat - Face","High Reward Cat - Place")
+
+# Z-score age and ERS and add age squared
+trialwiseVTCERSwdemog$ageScaled <- scale(trialwiseVTCERSwdemog$ExactAge) # Scale age
+trialwiseVTCERSwdemog$ageScaledsq <- (trialwiseVTCERSwdemog$ageScaled)^2
+trialwiseVTCERSwdemog$ERSZ <- scale(trialwiseVTCERSwdemog$ERS) # Scale ERS
+
+# Make reward variables factors
 trialwiseVTCERSwdemog$HighRewardStim <- as.factor(trialwiseVTCERSwdemog$HighRewardStim)
 trialwiseVTCERSwdemog$RewardType <- as.factor(trialwiseVTCERSwdemog$RewardType)
 
+# Fit model for stats
+VTCERStrialwiseacc <- glmer(memory ~ ERSZ + RewardType + ageScaled + HighRewardStim + (RewardType|subid), family = binomial, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = trialwiseVTCERSwdemog)
+Anova(VTCERStrialwiseacc, type = "III")
 
+# Fit model for plotting
+VTCERStrialwiseplotting <- glmer(memory ~ ERS + RewardType + ageScaled + HighRewardStim + (RewardType|subid), family = binomial, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = trialwiseVTCERSwdemog)
+Anova(VTCERStrialwiseplotting, type = "III")
 
-VTCERStrialwiseacc <- glmer(memory ~ ERSZ + RewardType + ageScaled + HighRewardStim + (RewardType|subid), family=binomial, control = glmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = trialwiseVTCERSwdemog)
-
-Anova(VTCERStrialwiseacc, type="III")
-
-VTCERStrialwiseplotting <- glmer(memory ~ ERS + RewardType + ageScaled + HighRewardStim + (RewardType|subid), family=binomial, control = glmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = trialwiseVTCERSwdemog)
-
-Anova(VTCERStrialwiseplotting, type="III")
-
-plot_model(VTCERStrialwiseplotting, type = "pred", terms = c("ERS [all]"), title="", line.size=2, colors="blue") +
-    xlab("VTC Encoding-Retrieval Similarity") + #x axis label
+# Plot
+plot_model(VTCERStrialwiseplotting, type = "pred", terms = c("ERS [all]"), title = "", line.size = 3, colors = VTC) +
+  xlab("VTC Encoding-Retrieval Similarity") + # x axis label
   ylab("Specific Source Memory Day 2 \n Predicted Probability") +
-  xlim(-0.2,0.6) +
-  theme(title= element_text(size=26, vjust=2, face="bold"), #use these settings for titles unless otherwise specified
-        axis.title.x= element_text(size=26),
-        axis.title.y= element_text(size=26, vjust=1.5),
-        axis.text.x= element_text(size=24, colour="black", vjust=0.6),
-        axis.text.y= element_text(size=24, colour="black"),
-        legend.title= element_text(size=24), #no legend, but just in case you need one
-        legend.text= element_text(size=24),
-        #legend.position="none",
-        strip.text = element_text(size=24, face="bold"), #text in strip headings
-        panel.grid.major = element_blank(), #take out grid marks
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-
+  xlim(-0.2, 0.6) +
+  rsa_theme
+ggsave('figures/VTC_trialwise_fx.png', width = 12, height = 8)
 ```
 
 # Brain-Behavior & Brain-Brain Relations
 
-```{r relations, echo = FALSE}
-#merge data and demog dfs
+```{r wrangleDataRelations, echo = FALSE}
+# Merge behavioral, AntHipp, VTC, and demographic data and change variable types
 anthippRSAdatawbehav <- full_join(anthippRSAdata, behavdata, by = "subid")
-
 anthippRSAdatawbehav$HighRewardStim <- as.factor(anthippRSAdatawbehav$HighRewardStim.x)
-
 original_cols <- colnames(VTCRSAdata)
-colnames(VTCRSAdata) <- paste("VTC" ,original_cols,sep=".")
+colnames(VTCRSAdata) <- paste("VTC", original_cols, sep = ".")
 names(VTCRSAdata)[names(VTCRSAdata) == 'VTC.subid'] <- 'subid'
-
 anthippRSAdatawbehav <- full_join(anthippRSAdatawbehav, VTCRSAdata, by = "subid")
 
-#load and merge encoding activation df
+# Read in encoding activation data and change variable types
 encactiv = read.csv("data/encodingactivation.csv")
 encactiv$subid <- as.factor(encactiv$subid)
 
-
+# Merge encoding activation and remaining data
 anthippRSAdatawbehav <- full_join(anthippRSAdatawbehav, encactiv, by = "subid")
 
-#compute variables of interest
+# Compute relational variables of interest
 anthippRSAdatawbehav$highvlowERS <- (anthippRSAdatawbehav$highrewardERS - anthippRSAdatawbehav$lowrewardERS)
-
 anthippRSAdatawbehav$highvlowERSabs <- abs(anthippRSAdatawbehav$highvlowERS)
-
-anthippRSAdatawbehav$highvlowspecificmemd2 <- ((anthippRSAdatawbehav$HighRewAssocRetrievedHitDay2 + anthippRSAdatawbehav$HighRewAssocHitDay2)/2) - ((anthippRSAdatawbehav$LowRewAssocRetrievedHitDay2 + anthippRSAdatawbehav$LowRewAssocHitDay2)/2)
-
+anthippRSAdatawbehav$highvlowspecificmemd2 <- ((anthippRSAdatawbehav$HighRewAssocRetrievedHitDay2 + anthippRSAdatawbehav$HighRewAssocHitDay2) / 2) - ((anthippRSAdatawbehav$LowRewAssocRetrievedHitDay2 + anthippRSAdatawbehav$LowRewAssocHitDay2) / 2)
 anthippRSAdatawbehav$VTC.highvlowencsim <- anthippRSAdatawbehav$VTC.highrewardencsim - anthippRSAdatawbehav$VTC.lowrewardencsim
 
-
-#remove incomplete cases, z-score continuous predictors
-anthippRSAdatawbehavfullruns <- anthippRSAdatawbehav[!is.na(anthippRSAdatawbehav$highrewardencsim),]
-
-
-anthippRSAdatawbehavfullruns$ageScaled <- scale(anthippRSAdatawbehavfullruns$ExactAge.x) #scale age
+# Remove incomplete cases and z-score continuous predictors
+anthippRSAdatawbehavfullruns <- anthippRSAdatawbehav[!is.na(anthippRSAdatawbehav$highrewardencsim), ]
+anthippRSAdatawbehavfullruns$ageScaled <- scale(anthippRSAdatawbehavfullruns$ExactAge.x) # Scale age
 anthippRSAdatawbehavfullruns$ageScaledsq <- (anthippRSAdatawbehavfullruns$ageScaled)^2 
- 
 anthippRSAdatawbehavfullruns$ageScaled <- as.numeric(anthippRSAdatawbehavfullruns$ageScaled)
 anthippRSAdatawbehavfullruns$ageScaledsq <- as.numeric(anthippRSAdatawbehavfullruns$ageScaledsq)
-
 anthippRSAdatawbehavfullruns$VTC.highvlowencsimZ <- scale(anthippRSAdatawbehavfullruns$VTC.highvlowencsim)
 anthippRSAdatawbehavfullruns$highvlowERSabsZ <- scale(anthippRSAdatawbehavfullruns$highvlowERSabs)
+```
 
+## Memory vs. Hippocampal ERS, VTC Encoding Similarity
 
-#reward-sensitive ERS measure + memory regression + plots
+* AntHipp ERS absolute value = significant
+* VTC encoding similarity = marginal
 
-summary(lm(highvlowspecificmemd2 ~ highvlowERSabs + VTC.highvlowencsim + ageScaled + HighRewardStim, data = anthippRSAdatawbehavfullruns)) #hipp abs sig and VTC enc marginal (same results w Zsscored brain vars)
-
+```{r analyzeRew_Mem_AntHipp_VTC, echo = FALSE, message = FALSE}
+# Memory regression with reward-sensitive brain measures
 highvlowmemERSsim <- lm(highvlowspecificmemd2 ~ highvlowERSabs + VTC.highvlowencsim + ageScaled + HighRewardStim, data = anthippRSAdatawbehavfullruns)
+summary(highvlowmemERSsim) 
+# AntHipp ERS absolute value = significant
+# VTC encoding similarity = marginal
+# (same results produced with z-scored brain variables)
 
-#plot_model(highvlowmemERSsim, type = "pred", terms = c("highvlowERSabs"),  show.data = TRUE, title = "", line.size=2) +
-ggplot(anthippRSAdatawbehavfullruns, aes(y = highvlowspecificmemd2, x = highvlowERSabs)) + #define data; x & y variables
- geom_point(size=3, color="#73A291") + 
-  geom_smooth(method=lm, size=2, color="#73A291", fill="#73A291") + 
-      xlab("|High - Low Reward Hippocampal ERS|") + #x axis label
-  ylab("High - Low Reward Memory") +
-  xlim(0,0.08) +
-  ylim(-0.3,0.4) +
-  theme(title= element_text(size=26, vjust=2, face="bold"), #use these settings for titles unless otherwise specified
-        axis.title.x= element_text(size=26),
-        axis.title.y= element_text(size=26, vjust=1.5),
-        axis.text.x= element_text(size=24, colour="black", vjust=0.6),
-        axis.text.y= element_text(size=24, colour="black"),
-        legend.title= element_text(size=24), #no legend, but just in case you need one
-        legend.text= element_text(size=24),
-        #legend.position="none",
-        strip.text = element_text(size=24, face="bold"), #text in strip headings
-        panel.grid.major = element_blank(), #take out grid marks
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
+# Reward-sensitive hippocampal ERS / memory plot, resembling:
+# plot_model(highvlowmemERSsim, type = "pred", terms = c("highvlowERSabs"), show.data = TRUE, title = "", line.size = 3)
+ggplot(anthippRSAdatawbehavfullruns, aes(y = highvlowspecificmemd2, x = highvlowERSabs)) +
+  geom_point(size = 3, color = AntHipp) + 
+  geom_smooth(method = lm, size = 3, color = AntHipp, fill = AntHipp) + 
+  xlab("|High - Low Reward Hippocampal ERS|") + # x axis label
+  ylab("High - Low Reward Memory") + # y axis label
+  xlim(0, 0.08) +
+  ylim(-0.3, 0.4) +
+  rsa_theme
+ggsave('figures/mem_AntHipp_ERS.png', width = 12, height = 8)
 
-  
-#plot_model(highvlowmemERSsim, type = "pred", terms = c("VTC.highvlowencsim"),  show.data = TRUE, title = "", line.size = 2) +
-ggplot(anthippRSAdatawbehavfullruns, aes(y = highvlowspecificmemd2, x = VTC.highvlowencsim)) + #define data; x & y variables
- geom_point(size=3, color="#388697") + 
-  geom_smooth(method=lm, size=2, color="#388697", fill="#388697") + 
-      xlab("High - Low Reward VTC Enc Similarity") + #x axis label
-  ylab("High - Low Reward Memory") +
-   xlim(-0.065,0.085) +
-    ylim(-0.3,0.4) +
-  #xlim(0,0.08) +
-  theme(title= element_text(size=26, vjust=2, face="bold"), #use these settings for titles unless otherwise specified
-        axis.title.x= element_text(size=26),
-        axis.title.y= element_text(size=26, vjust=1.5),
-        axis.text.x= element_text(size=24, colour="black", vjust=0.6),
-        axis.text.y= element_text(size=24, colour="black"),
-        legend.title= element_text(size=24), #no legend, but just in case you need one
-        legend.text= element_text(size=24),
-        #legend.position="none",
-        strip.text = element_text(size=24, face="bold"), #text in strip headings
-        panel.grid.major = element_blank(), #take out grid marks
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-  
+# Reward-sensitive VTC encoding similarity / memory plot, resembling:  
+# plot_model(highvlowmemERSsim, type = "pred", terms = c("VTC.highvlowencsim"),  show.data = TRUE, title = "", line.size = 3)
+ggplot(anthippRSAdatawbehavfullruns, aes(y = highvlowspecificmemd2, x = VTC.highvlowencsim)) +
+  geom_point(size = 3, color = VTC) + 
+  geom_smooth(method = lm, size = 3, color = VTC, fill = VTC) + 
+  xlab("High - Low Reward VTC Enc Similarity") + # x axis label
+  ylab("High - Low Reward Memory") + # y axis label
+  xlim(-0.065, 0.085) +
+  ylim(-0.3, 0.4) +
+  rsa_theme
+ggsave('figures/mem_VTC_enc_sim.png', width = 12, height = 8)
+```  
 
-#anthipp ERS + VTA regression + plots
+## Hippocampal ERS vs. VTA Encoding Activation
+
+* VTA encoding activation = significant
+* age = marginal
+
+```{r analyzeRew_AntHipp_VTA, echo = FALSE, message = FALSE}
+# Regression with reward-sensitive brain measures
 anthippRSAdatawbehavfullruns$VTAZ <- scale(anthippRSAdatawbehavfullruns$VTA)
+anthippERSVTAenc <- lm(highvlowERS ~ VTA * ageScaled + HighRewardStim, data = anthippRSAdatawbehavfullruns)
+summary(anthippERSVTAenc) 
+# (same results produced with z-scored VTA)
 
+# Reward-sensitive VTA encoding activation / hippocampal ERS plot, resembling:
+# plot_model(anthippERSVTAenc, type = "pred", terms = c("VTA"),  show.data = TRUE, title = "", line.size = 3)
+ggplot(anthippRSAdatawbehavfullruns, aes(y = highvlowERS, x = VTA)) +
+  geom_point(size = 3, color = VTA) + 
+  geom_smooth(method = lm, size = 3, color = AntHipp, fill = AntHipp) + 
+  xlab("VTA High > Low Reward Enc Activation") + # x axis label
+  ylab("High - Low Reward Hippocampal ERS") + # y axis label
+  # xlim(0, 0.08) +
+  rsa_theme
+ggsave('figures/AntHipp_ERS_VTA.png', width = 12, height = 8)
+```
 
-summary(lm(highvlowERS ~ VTA * ageScaled + HighRewardStim, data = anthippRSAdatawbehavfullruns)) 
+## VTC Encoding Similarity vs. dlPFC Encoding Activation
 
-anthippERSVTAenc <- lm(highvlowERS ~ VTA * ageScaled + HighRewardStim, data = anthippRSAdatawbehavfullruns) #same effect if VTA z-scored
+* dlPFC encoding activation = significant
 
-#plot_model(anthippERSVTAenc, type = "pred", terms = c("VTA"),  show.data = TRUE, title = "", line.size=2) +
-ggplot(anthippRSAdatawbehavfullruns, aes(y = highvlowERS, x = VTA)) + #define data; x & y variables
- geom_point(size=3, color="#BBBE64") + 
-  geom_smooth(method=lm, size=2, color="#BBBE64", fill="#BBBE64") + 
-      xlab("VTA High > Low Reward Enc Activation") + #x axis label
-  ylab("High - Low Reward Hippocampal ERS") +
-  #xlim(0,0.08) +
-  theme(title= element_text(size=26, vjust=2, face="bold"), #use these settings for titles unless otherwise specified
-        axis.title.x= element_text(size=26),
-        axis.title.y= element_text(size=26, vjust=1.5),
-        axis.text.x= element_text(size=24, colour="black", vjust=0.6),
-        axis.text.y= element_text(size=24, colour="black"),
-        legend.title= element_text(size=24), #no legend, but just in case you need one
-        legend.text= element_text(size=24),
-        #legend.position="none",
-        strip.text = element_text(size=24, face="bold"), #text in strip headings
-        panel.grid.major = element_blank(), #take out grid marks
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-
- 
-#VTC enc sim + dlPFC regression + plots
+```{r analyzeRew_VTC_dlPFC, echo = FALSE, message = FALSE}
+# Regression with reward-sensitive brain measures
 anthippRSAdatawbehavfullruns$dlPFCZ <- scale(anthippRSAdatawbehavfullruns$dlPFC)
-
-summary(lm(VTC.highvlowencsim ~ dlPFC * ageScaled + HighRewardStim, data = anthippRSAdatawbehavfullruns)) #same effect if dlPFC z-scored
 VTCERSdlPFCenc <- lm(VTC.highvlowencsim ~ dlPFC * ageScaled + HighRewardStim, data = anthippRSAdatawbehavfullruns)
+summary(VTCERSdlPFCenc) 
+# (same results produced with z-scored dlPFC)
 
-#plot_model(VTCERSdlPFCenc, type = "pred", terms = c("dlPFC"),  show.data = TRUE, title = "", line.size=2)+
-ggplot(anthippRSAdatawbehavfullruns, aes(y = VTC.highvlowencsim, x = dlPFC)) + #define data; x & y variables
- geom_point(size=3, color="#293F14") + 
-  geom_smooth(method=lm, size=2, color="#293F14", fill="#293F14") + 
-      xlab("dlPFC High > Low Reward Enc Activation") + #x axis label
-  ylab("High - Low Reward VTC Enc Similarity") +
-  #xlim(0,0.08) +
-  theme(title= element_text(size=26, vjust=2, face="bold"), #use these settings for titles unless otherwise specified
-        axis.title.x= element_text(size=26),
-        axis.title.y= element_text(size=26, vjust=1.5),
-        axis.text.x= element_text(size=24, colour="black", vjust=0.6),
-        axis.text.y= element_text(size=24, colour="black"),
-        legend.title= element_text(size=24), #no legend, but just in case you need one
-        legend.text= element_text(size=24),
-        #legend.position="none",
-        strip.text = element_text(size=24, face="bold"), #text in strip headings
-        panel.grid.major = element_blank(), #take out grid marks
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
+# Reward-sensitive dlPFC encoding activation / VTC encoding similarity plot, resembling:
+# plot_model(VTCERSdlPFCenc, type = "pred", terms = c("dlPFC"),  show.data = TRUE, title = "", line.size = 3)
+ggplot(anthippRSAdatawbehavfullruns, aes(y = VTC.highvlowencsim, x = dlPFC)) +
+  geom_point(size = 3, color = dlPFC) + 
+  geom_smooth(method = lm, size = 3, color = VTC, fill = VTC) + 
+  xlab("dlPFC High > Low Reward Enc Activation") + # x axis label
+  ylab("High - Low Reward VTC Enc Similarity") + # y axis label
+  # xlim(0, 0.08) +
+  rsa_theme
+ggsave('figures/VTC_enc_sim_dlPFC.png', width = 12, height = 8)
+```
 
+# Encoding Activation Tradeoff
 
-#are encoding measures trading off?
-summary(lm(dlPFC ~ VTA, data = anthippRSAdatawbehavfullruns))
+* significant
+
+```{r analyzeTradeoff, echo = FALSE, message = FALSE}
+# Are encoding activation measures trading off?
 encact <- lm(dlPFC ~ VTA, data = anthippRSAdatawbehavfullruns)
+summary(encact)
 
-plot_model(encact, type = "pred", terms = c("VTA"),  show.data = TRUE, title = "", line.size=2)
-
+# Reward-sensitive VTA encoding activation / dlPFC encoding activation plot, resembling:
+# plot_model(encact, type = "pred", terms = c("VTA"),  show.data = TRUE, title = "", line.size = 3)
+ggplot(anthippRSAdatawbehavfullruns, aes(y = dlPFC, x = VTA)) +
+  geom_point(size = 3, color = VTA) + 
+  geom_smooth(method = lm, size = 3, color = dlPFC, fill = dlPFC) + 
+  xlab("VTA High > Low Reward Enc Activation") + # x axis label
+  ylab("dlPFC High > Low Reward Enc Activation") + # y axis label
+  rsa_theme
+ggsave('figures/dlPFC_VTA.png', width = 12, height = 8)
 ```
