@@ -1,6 +1,6 @@
 # reward_memories_rsa
 
-This repository contains the code required to re-create the data visualizations and analyses reported in the moterRSA manuscript. All code is written in R.
+This repository contains the code required to re-create the data visualizations and analyses reported in the manuscript ["Neural representations of reward-related memories shift across development"] (https://osf.io/preprints/psyarxiv/h53qa_v1). All code is written in R.
 
 R Core Team (2019). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
