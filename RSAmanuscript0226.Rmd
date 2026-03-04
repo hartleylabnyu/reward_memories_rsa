@@ -151,6 +151,33 @@ ggplot(assochitd2all.long, aes(y = mem, x = ExactAge, colour = RewardType, group
   rsa_theme
 ggsave('figures/spec_source_mem_day2.png', width = 12, height = 8)
 ```
+# Similar pattern of results when including only items that were retrieved on Day 1
+
+1. Significant effect of reward type (p=.011), marginal effect of age (p=.087)
+
+```{r analyzeBehav2, echo = FALSE, warning = FALSE, message = FALSE}
+# Day 2 specific associative memory - retrieved on Day 1 only
+assochitd2ret.long = melt(behavdata,
+                       id.vars = c("subid", "HighRewardStim", "AgeGroup", "ExactAge", "Gender"),
+                       measure.vars = c("HighRewAssocRetrievedHitDay2", "LowRewAssocRetrievedHitDay2"),
+                       variable.name = "assoc")
+names(assochitd2ret.long)[names(assochitd2ret.long) == "value"] <- "mem"
+
+# Code RewardType
+findRew <- "(High|Low)"
+assochitd2ret.long <- transform(assochitd2ret.long, RewardType = stringr::str_extract(assoc, findRew))
+
+# Z-score age 
+assochitd2ret.long$ageScaled <- scale(assochitd2ret.long$ExactAge) 
+
+# Make reward variables factors
+assochitd2ret.long$HighRewardStim <- as.factor(assochitd2ret.long$HighRewardStim)
+assochitd2ret.long$RewardType <- as.factor(assochitd2ret.long$RewardType)
+
+# Model
+assocmemmodelretronly <- lmer(mem ~ RewardType * ageScaled + HighRewardStim +  (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = assochitd2ret.long) 
+Anova(assocmemmodelretronly, type = "III")
+```
 
 # VTC Pattern Similarity
 
