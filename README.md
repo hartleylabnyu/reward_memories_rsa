@@ -1,11 +1,11 @@
 # reward_memories_rsa
 
-This repository contains the code required to re-create the data visualizations and analyses reported in the manuscript ["Neural representations of reward-related memories shift across development"](https://osf.io/preprints/psyarxiv/h53qa_v1). All code is written in R.
+This repository contains the code required to re-create the data visualizations and analyses reported in the manuscript ["Neural representations of reward-related memories shift across development"](https://doi.org/10.1523/JNEUROSCI.1325-25.2026). A publicly-available version can be found [here](https://osf.io/preprints/psyarxiv/h53qa_v5). All code is written in R.
 
 R Core Team (2019). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
 ## Script
-<b>RSAmanuscriptdraft0125.Rmd</b> reproduces the data visualizations and analyses, and it creates the .html file.
+<b>RSAmanuscriptdraft0226.Rmd</b> reproduces the data visualizations and analyses, and it creates the .html file.
 
 ## Data
 Data for <i>N</i> = 89 children, adolescent, and adult participants are stored in the <b><i>data</i></b> directory across multiple .csv files:
@@ -16,10 +16,11 @@ Data for <i>N</i> = 89 children, adolescent, and adult participants are stored i
 * <b>RSAdata_antHIPP.csv</b> contains participants' neural anterior hippocampus data.
 * <b>RSAdfQAantHIPP.csv</b> contains QA on participants' neural anterior hippocampus data.
 * <b>trialwiseERS_VTC_wmemoryday2.csv</b> contains participants' trial-wise neural VTC data (for brain-behavior relations).
+* <b>trialwiseERS_antHIPP_wmemoryday2.csv</b> contains participants' trial-wise neural anterior hippocampus data (for brain-behavior relations).
 * <b>encodingactivation.csv</b> contains participants' neural data (for brain-brain relations).
 
 ## Figures
-The data visualizations are outputted by <b>RSAmanuscriptdraft0125.Rmd</b> and are stored in the <b><i>figures</i></b> directory.
+The data visualizations are outputted by <b>RSAmanuscriptdraft0226.Rmd</b> and are stored in the <b><i>figures</i></b> directory.
 
 ## Contact
 This study is led by Alexandra Cohen (ali.cohen@emory.edu) and was conducted in the [Hartley Lab at New York University](https://www.hartleylab.org/).
