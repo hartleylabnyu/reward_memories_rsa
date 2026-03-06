@@ -151,9 +151,8 @@ ggplot(assochitd2all.long, aes(y = mem, x = ExactAge, colour = RewardType, group
   rsa_theme
 ggsave('figures/spec_source_mem_day2.png', width = 12, height = 8)
 ```
-# Similar pattern of results when including only items that were retrieved on Day 1
 
-1. Significant effect of reward type (p=.011), marginal effect of age (p=.087)
+2. Similar pattern of results when including only items that were retrieved on Day 1; significant effect of reward type (p = .011), marginal effect of age (p = .087)
 
 ```{r analyzeBehav2, echo = FALSE, warning = FALSE, message = FALSE}
 # Day 2 specific associative memory - retrieved on Day 1 only
@@ -260,6 +259,7 @@ Anova(VTCersd1modelnoslope, type = "III")
 
 # Sensitivity analysis - control for voxel number, same pattern of results as above
 VTCersd1modelnoslopevoxnum <- lmer(similarity ~ RewardType * ageScaled + RewardType * ageScaledsq + HighRewardStim + goldencvoxnumScaled + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = VTCers.long)
+print("Sensitivity analysis controlling for voxel number", quote = FALSE)
 Anova(VTCersd1modelnoslopevoxnum, type = "III")
 
 # Sensitivity analysis - remove subs with only 1 run
@@ -269,6 +269,7 @@ VTCers.long.tworunsonly <- VTCers.long[!VTCers.long$subid %in% singlerunsubs, ]
 
 # Same pattern of results as above
 VTCersd1modelnoslopetworuns <- VTCersd1modelnoslope <- lmer(similarity ~ RewardType * ageScaled + RewardType * ageScaledsq + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = VTCers.long.tworunsonly)
+print("Sensitivity analysis removing 1 run subs", quote = FALSE)
 Anova(VTCersd1modelnoslopetworuns, type = "III")
 
 # Plot
@@ -313,6 +314,7 @@ Anova(VTCencsimd1modelnoslope, type = "III")
 
 # Sensitivity analysis - control for voxel number, same pattern of results as above
 VTCencsimd1modelnoslopevoxnum <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + goldencvoxnumScaled + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = VTCencsim.long)
+print("Sensitivity analysis controlling for voxel number", quote = FALSE)
 Anova(VTCencsimd1modelnoslopevoxnum, type = "III")
 
 # Sensitivity analysis - remove subs with only 1 run
@@ -320,6 +322,7 @@ VTCencsim.long.tworunsonly <- VTCencsim.long[!VTCencsim.long$subid %in% singleru
 
 # Same pattern of results as above
 VTCencsimd1modelnoslopetworuns <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = VTCencsim.long.tworunsonly)
+print("Sensitivity analysis removing 1 run subs", quote = FALSE)
 Anova(VTCencsimd1modelnoslopetworuns, type = "III")
 
 # Plot
@@ -456,6 +459,7 @@ Anova(anthippersd1modelnoslope, type = "III")
 
 # Sensitivity analysis - control for voxel number, same pattern of results as above
 anthippersd1modelnoslopevoxcontrol <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + goldencvoxnumScaled + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippers.long)
+print("Sensitivity analysis controlling for voxel number", quote = FALSE)
 Anova(anthippersd1modelnoslopevoxcontrol, type = "III")
 
 # Sensitivity analysis - remove subs with only 1 run
@@ -465,6 +469,7 @@ anthippers.long.tworunsonly <- anthippers.long[!anthippers.long$subid %in% singl
 
 # Same pattern of results as above
 anthippersd1modelnoslopetworuns <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippers.long.tworunsonly)
+print("Sensitivity analysis removing 1 run subs", quote = FALSE)
 Anova(anthippersd1modelnoslopetworuns, type = "III")
 
 # Plot
@@ -507,6 +512,7 @@ Anova(anthippencsimd1modelnoslope, type = "III")
 
 # Sensitivity analysis - control for voxel number, same pattern of results as above
 anthippencsimd1modelnoslopevoxcontrol <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + goldencvoxnumScaled + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippencsim.long)
+print("Sensitivity analysis controlling for voxel number", quote = FALSE)
 Anova(anthippencsimd1modelnoslopevoxcontrol, type = "III")
 
 # Plot
@@ -549,6 +555,7 @@ Anova(anthippretsimd1modelnoslope, type = "III")
 
 # Sensitivity analysis - control for voxel number, same pattern of results as above
 anthippretsimd1modelnoslopevoxcontrol <- lmer(similarity ~ RewardType * ageScaled + HighRewardStim + goldretvoxnumScaled + (1|subid), control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = anthippretsim.long)
+print("Sensitivity analysis controlling for voxel number", quote = FALSE)
 Anova(anthippretsimd1modelnoslopevoxcontrol, type = "III")
 
 # Plot
@@ -564,14 +571,13 @@ ggplot(anthippretsim.long, aes(y = similarity, x = ExactAge, colour = RewardType
 ggsave('figures/AntHipp_ret_sim.png', width = 12, height = 8)
 ```
 
-
 # Brain-Behavior & Brain-Brain Relations
 
 ## Trialwise VTC ERS
 
 * Greater VTC ERS is associated with better specific source memory on day 2
 
-```{r trialwiseVTC, echo = FALSE, message = FALSE, results = "hide"}
+```{r trialwiseVTC, echo = FALSE, message = FALSE}
 # Read in trial-wise VTC ERS data and change variable types
 trialwiseVTCERS = read.csv("data/trialwiseERS_VTC_wmemoryday2.csv")
 trialwiseVTCERS$subid <- as.factor(trialwiseVTCERS$subid)
@@ -591,10 +597,12 @@ trialwiseVTCERSwdemog$RewardType <- as.factor(trialwiseVTCERSwdemog$RewardType)
 
 # Fit model for stats
 VTCERStrialwiseacc <- glmer(memory ~ ERSZ + RewardType + ageScaled + HighRewardStim + (RewardType|subid), family = binomial, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = trialwiseVTCERSwdemog)
+print("Stats model", quote = FALSE)
 Anova(VTCERStrialwiseacc, type = "III")
 
 # Fit model for plotting
 VTCERStrialwiseplotting <- glmer(memory ~ ERS + RewardType + ageScaled + HighRewardStim + (RewardType|subid), family = binomial, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=1e6)), contrasts = list(RewardType = "contr.sum", HighRewardStim = "contr.sum"), data = trialwiseVTCERSwdemog)
+print("Plotting model", quote = FALSE)
 Anova(VTCERStrialwiseplotting, type = "III")
 
 # Plot
@@ -607,7 +615,6 @@ plot_model(VTCERStrialwiseplotting, type = "pred", terms = c("ERS [all]"),
   rsa_theme
 ggsave('figures/VTC_trialwise_fx.png', width = 12, height = 8)
 ```
-
 
 ## Memory vs. Hippocampal ERS, VTC Encoding Similarity
 
@@ -700,9 +707,11 @@ ggplot(anthippRSAdatawbehavfullruns, aes(y = highvlowERS, x = VTA)) +
 ggsave('figures/AntHipp_ERS_VTA_enc.png', width = 12, height = 8)
 ```
 
-# SUPPLEMENTAL ANALYSES
+# Follow-Up and Supplemental Analyses
 
 ## ERS by non-linear age
+
+Two-lines test
 
 ```{r ERS_nonlin, echo = FALSE, message = FALSE}
 # Plot
@@ -771,10 +780,9 @@ ggplot(anthippers.long, aes(x = RewardTypelab, y = similarity, fill = RewardType
         panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8)) # outline each facet panel
 ```
 
-# aHC ERS by correct/incorrect, separately for adults and children
+## AntHipp ERS by correct/incorrect, separately for adults and children
 
-Model
-```{r trialwiseaHC, echo = FALSE, results = "hide"}
+```{r trialwiseaHC, echo = FALSE}
 # Read in trial-wise VTC ERS data and change variable types
 trialwiseaHCERS = read.csv("data/trialwiseERS_antHIPP_wmemoryday2.csv")
 trialwiseaHCERS$subid <- as.factor(trialwiseaHCERS$subid)
@@ -797,7 +805,6 @@ aHCERStrialwiseacc <- lmer(ERSZ ~ ageScaled*memory*RewardType + HighRewardStim +
 summary(aHCERStrialwiseacc)
 ```
 
-Plot
 ```{r ERS_ageaccuracy, echo = FALSE, message = FALSE}
 # Define your groups
 groups <- list("KidsTeens" = trialwiseaHCERSwdemog %>% filter(AgeGroup != 1),
@@ -831,7 +838,7 @@ for (g in names(groups)) {
     facet_wrap(~ memory, labeller = as_labeller(c("0" = "Incorrect", "1" = "Correct"))) +
     labs(x = "Reward Type", y = "ERS (Subject-Averaged)",
          title = paste("ERS by Reward Type and Accuracy —", g)) +
-    rsa_theme
+    rsa_theme + theme(legend.position = "none")
   
   print(p)  # Display each plot
   
@@ -843,7 +850,7 @@ for (g in names(groups)) {
 
 ## VTA high > low activation by age
 
-```{r VTA_age, echo = FALSE, message = FALSE, results = "hide"}
+```{r VTA_age, echo = FALSE, message = FALSE}
 # Regression model
 VTAage <- lm(VTA ~ ageScaled + HighRewardStim, data = anthippRSAdatawbehavfullruns)
 summary(VTAage) 
